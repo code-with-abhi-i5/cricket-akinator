@@ -1,0 +1,195 @@
+/* ==================
+   Playbook Section
+   ================== */
+
+.playbook {
+  position: relative;
+  padding: 120px 0;
+  background: linear-gradient(
+    180deg,
+    var(--midnight-navy) 0%,
+    var(--surface-container-lowest) 50%,
+    var(--midnight-navy) 100%
+  );
+}
+
+/* Header */
+.playbook__header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.playbook__desc {
+  max-width: 600px;
+  margin: 16px auto 0;
+}
+
+/* Timeline */
+.playbook__timeline {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.playbook__timeline-line {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 242, 255, 0.15) 10%,
+    rgba(0, 242, 255, 0.15) 90%,
+    transparent
+  );
+}
+
+/* Step */
+.playbook__step {
+  display: flex;
+  gap: 32px;
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.playbook--visible .playbook__step {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Connector */
+.playbook__step-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  padding-top: 28px;
+}
+
+.playbook__step-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--electric-cyan);
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.5),
+              0 0 24px rgba(0, 242, 255, 0.2);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.playbook__step-line {
+  width: 1px;
+  flex: 1;
+  background: rgba(0, 242, 255, 0.1);
+}
+
+/* Card */
+.playbook__step-card {
+  flex: 1;
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.playbook__step-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.playbook__step-number {
+  font-family: var(--font-label);
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(0, 242, 255, 0.15);
+  line-height: 1;
+}
+
+.playbook__step-tag {
+  font-family: var(--font-label);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.playbook__step-tag--cyan {
+  color: var(--electric-cyan);
+  background: rgba(0, 242, 255, 0.08);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+}
+
+.playbook__step-tag--green {
+  color: var(--cricket-green-bright);
+  background: rgba(46, 204, 113, 0.08);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.playbook__step-title {
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+
+.playbook__step-desc {
+  color: var(--on-surface-variant);
+}
+
+/* Scan line decoration */
+.playbook__step-scan {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 242, 255, 0.2) 20%,
+    rgba(0, 242, 255, 0.4) 50%,
+    rgba(0, 242, 255, 0.2) 80%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.playbook__step-card:hover .playbook__step-scan {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .playbook {
+    padding: 80px 0;
+  }
+
+  .playbook__header {
+    margin-bottom: 48px;
+  }
+
+  .playbook__step {
+    gap: 20px;
+  }
+
+  .playbook__step-card {
+    padding: 20px 24px;
+  }
+
+  .playbook__timeline-line {
+    left: 16px;
+  }
+
+  .playbook__step-connector {
+    width: 32px;
+  }
+}

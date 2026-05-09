@@ -1,0 +1,224 @@
+/* ==================
+   Navbar Component
+   ================== */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 16px 0;
+  transition: all var(--transition-base);
+}
+
+.navbar--scrolled {
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 242, 255, 0.08);
+  padding: 10px 0;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--on-surface);
+}
+
+.navbar__logo-icon {
+  display: flex;
+  animation: pulse-cyan 3s ease-in-out infinite;
+}
+
+.navbar__logo-text {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.navbar__logo-accent {
+  color: var(--electric-cyan);
+}
+
+/* Links */
+.navbar__links {
+  display: flex;
+  list-style: none;
+  gap: 40px;
+}
+
+.navbar__link {
+  font-family: var(--font-label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  position: relative;
+  padding: 4px 0;
+  transition: color var(--transition-fast);
+}
+
+.navbar__link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--electric-cyan);
+  transition: width var(--transition-base);
+  box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+}
+
+.navbar__link:hover {
+  color: var(--electric-cyan);
+}
+
+.navbar__link:hover::after {
+  width: 100%;
+}
+
+/* Actions */
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  border-radius: var(--radius-full);
+  background: rgba(46, 204, 113, 0.08);
+}
+
+.navbar__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cricket-green);
+  animation: pulse-cyan 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+}
+
+.navbar__status-text {
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--cricket-green-bright);
+}
+
+.navbar__cta {
+  font-size: 12px;
+  padding: 10px 24px;
+}
+
+/* Mobile Toggle */
+.navbar__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1001;
+}
+
+.navbar__toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--on-surface);
+  border-radius: 2px;
+  transition: all var(--transition-base);
+}
+
+.navbar__toggle--active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar__toggle--active span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar__toggle--active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile Menu */
+.navbar__mobile {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 12, 16, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 100px 24px 24px;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.navbar__mobile--open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.navbar__mobile-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.navbar__mobile-links a {
+  font-family: var(--font-headline);
+  font-size: 32px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.navbar__mobile-links a:hover {
+  color: var(--electric-cyan);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .navbar__links,
+  .navbar__actions {
+    display: none;
+  }
+
+  .navbar__toggle {
+    display: flex;
+  }
+
+  .navbar__mobile {
+    display: block;
+  }
+}
