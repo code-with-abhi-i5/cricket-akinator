@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './CTA.css';
 
 export default function CTA() {
@@ -49,12 +50,12 @@ export default function CTA() {
           </p>
 
           <div className="cta__actions" id="cta-actions">
-            <a href="#hero" className="btn-tactical btn-primary cta__btn-main">
+            <Link to="/guess" className="btn-tactical btn-primary cta__btn-main">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
                 <path d="M7 4l7 5-7 5V4z" />
               </svg>
               Enter the Arena
-            </a>
+            </Link>
             <a href="#playbook" className="btn-tactical btn-secondary">
               Review Playbook
             </a>

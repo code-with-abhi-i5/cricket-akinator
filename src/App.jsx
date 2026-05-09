@@ -1,21 +1,16 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import TacticalAnalysis from './components/TacticalAnalysis';
-import Playbook from './components/Playbook';
-import CTA from './components/CTA';
-import Footer from './components/Footer';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import GuessPage from './pages/GuessPage';
 
 export default function App() {
   return (
-    <div className="app">
-      <Navbar />
-      <main>
-        <Hero />
-        <TacticalAnalysis />
-        <Playbook />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/guess" element={<GuessPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }

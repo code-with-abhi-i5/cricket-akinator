@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -34,8 +35,8 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <ul className="navbar__links" id="nav-links">
-          <li><a href="#hero" className="navbar__link">Home</a></li>
-          <li><a href="#tactical" className="navbar__link">Play</a></li>
+          <li><Link to="/" className="navbar__link">Home</Link></li>
+          <li><Link to="/guess" className="navbar__link">Play</Link></li>
           <li><a href="#leaderboard" className="navbar__link">Leaderboard</a></li>
         </ul>
 
@@ -45,9 +46,9 @@ export default function Navbar() {
             <span className="navbar__status-dot"></span>
             <span className="navbar__status-text">LIVE</span>
           </div>
-          <a href="#cta" className="btn-tactical btn-primary navbar__cta" id="nav-cta">
+          <Link to="/guess" className="btn-tactical btn-primary navbar__cta" id="nav-cta">
             Launch Game
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -66,13 +67,13 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div className={`navbar__mobile ${mobileOpen ? 'navbar__mobile--open' : ''}`} id="mobile-menu">
         <ul className="navbar__mobile-links">
-          <li><a href="#hero" onClick={() => setMobileOpen(false)}>Home</a></li>
-          <li><a href="#tactical" onClick={() => setMobileOpen(false)}>Play</a></li>
+          <li><Link to="/" onClick={() => setMobileOpen(false)}>Home</Link></li>
+          <li><Link to="/guess" onClick={() => setMobileOpen(false)}>Play</Link></li>
           <li><a href="#leaderboard" onClick={() => setMobileOpen(false)}>Leaderboard</a></li>
           <li>
-            <a href="#cta" className="btn-tactical btn-primary" onClick={() => setMobileOpen(false)} style={{marginTop: '16px', width: '100%', justifyContent: 'center'}}>
+            <Link to="/guess" className="btn-tactical btn-primary" onClick={() => setMobileOpen(false)} style={{marginTop: '16px', width: '100%', justifyContent: 'center'}}>
               Launch Game
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
