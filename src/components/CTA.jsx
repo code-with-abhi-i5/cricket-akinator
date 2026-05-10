@@ -24,6 +24,10 @@ export default function CTA() {
     <section className="cta" id="cta" ref={sectionRef}>
       {/* Background Effects */}
       <div className="cta__bg">
+        <div className="cta__bg-stadium">
+          <img src="/images/cricket-field-aerial.png" alt="" aria-hidden="true" />
+        </div>
+        <div className="cta__bg-overlay"></div>
         <div className="cta__bg-grid"></div>
         <div className="cta__bg-glow cta__bg-glow--1"></div>
         <div className="cta__bg-glow cta__bg-glow--2"></div>
@@ -38,7 +42,7 @@ export default function CTA() {
           <div className="cta__corner cta__corner--bl"></div>
           <div className="cta__corner cta__corner--br"></div>
 
-          <span className="section-label cta__label">// Engage Protocol</span>
+          <span className="section-label cta__label">🏏 // Match Ready</span>
 
           <h2 className="cta__title" id="cta-title">
             Ready to prove your<br />
@@ -64,26 +68,17 @@ export default function CTA() {
           {/* Bottom stats ribbon */}
           <div className="cta__ribbon">
             <div className="cta__ribbon-item">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="5" stroke="#2ECC71" strokeWidth="1.5" />
-                <circle cx="7" cy="7" r="2" fill="#2ECC71" />
-              </svg>
+              <span className="cta__ribbon-emoji">🏏</span>
               <span>Free to Play</span>
             </div>
             <div className="cta__ribbon-sep"></div>
             <div className="cta__ribbon-item">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 2l1.5 3 3.5.5-2.5 2.5.6 3.5L7 9.75 3.9 11.5l.6-3.5L2 5.5 5.5 5 7 2z" stroke="#00F2FF" strokeWidth="1" fill="rgba(0,242,255,0.2)" />
-              </svg>
+              <span className="cta__ribbon-emoji">⭐</span>
               <span>No Sign-up Required</span>
             </div>
             <div className="cta__ribbon-sep"></div>
             <div className="cta__ribbon-item">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect x="2" y="2" width="10" height="10" rx="2" stroke="#00F2FF" strokeWidth="1.5" />
-                <line x1="5" y1="7" x2="9" y2="7" stroke="#00F2FF" strokeWidth="1.5" />
-                <line x1="7" y1="5" x2="7" y2="9" stroke="#00F2FF" strokeWidth="1.5" />
-              </svg>
+              <span className="cta__ribbon-emoji">⚡</span>
               <span>Instant Matchmaking</span>
             </div>
           </div>

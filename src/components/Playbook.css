@@ -75,14 +75,23 @@
 }
 
 .playbook__step-dot {
-  width: 12px;
-  height: 12px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--electric-cyan);
-  box-shadow: 0 0 12px rgba(0, 242, 255, 0.5),
-              0 0 24px rgba(0, 242, 255, 0.2);
+  background: rgba(0, 242, 255, 0.1);
+  border: 2px solid rgba(0, 242, 255, 0.3);
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.3),
+              0 0 24px rgba(0, 242, 255, 0.1);
   z-index: 1;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playbook__step-emoji {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .playbook__step-line {

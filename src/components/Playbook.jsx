@@ -5,6 +5,7 @@ const steps = [
   {
     id: 'select-era',
     number: '01',
+    emoji: '🏏',
     title: 'Select Your Era',
     description: 'Choose between Classic IPL, Modern Day, or specific franchise legends. Each era presents unique challenges and player pools.',
     tag: 'STRATEGY',
@@ -13,16 +14,18 @@ const steps = [
   {
     id: 'decode-clues',
     number: '02',
+    emoji: '📊',
     title: 'Decode The Clues',
-    description: 'Analyze AI-generated career paths, key dismissals, and iconic strike rates. Every data point is a piece of the puzzle.',
+    description: 'Analyze AI-generated career paths — batting averages, bowling figures, iconic innings, and key dismissals. Every data point is a piece of the puzzle.',
     tag: 'ANALYSIS',
     tagColor: 'green',
   },
   {
     id: 'claim-title',
     number: '03',
+    emoji: '🏆',
     title: 'Claim the Title',
-    description: 'Submit your guess and earn points based on speed and accuracy. Rise through the ranks to become the ultimate cricket oracle.',
+    description: 'Submit your guess and earn runs based on speed and accuracy. Rise through the ranks from a nets bowler to the ultimate cricket oracle.',
     tag: 'VICTORY',
     tagColor: 'cyan',
   },
@@ -50,10 +53,10 @@ export default function Playbook() {
     <section className="playbook" id="playbook" ref={sectionRef}>
       <div className="container">
         <div className="playbook__header">
-          <span className="section-label">// Mission Protocol</span>
+          <span className="section-label">⚡ // Match Protocol</span>
           <h2 className="headline-xl" id="playbook-title">The Playbook</h2>
           <p className="body-lg playbook__desc">
-            Mastering CricGuess AI requires more than just luck. It requires tactical insight and deep cricket knowledge.
+            Mastering CricGuess AI requires more than just luck — it requires tactical insight and deep cricket knowledge.
           </p>
         </div>
 
@@ -68,7 +71,9 @@ export default function Playbook() {
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="playbook__step-connector">
-                <div className="playbook__step-dot"></div>
+                <div className="playbook__step-dot">
+                  <span className="playbook__step-emoji">{step.emoji}</span>
+                </div>
                 {index < steps.length - 1 && <div className="playbook__step-line"></div>}
               </div>
 

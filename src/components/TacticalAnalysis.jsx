@@ -5,66 +5,81 @@ const features = [
   {
     id: 'ai-analytics',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4L28 10v12L16 28 4 22V10L16 4z" stroke="#00F2FF" strokeWidth="1.5" fill="none" />
-        <circle cx="16" cy="16" r="5" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.1)" />
-        <circle cx="16" cy="16" r="2" fill="#00F2FF" />
-        <line x1="16" y1="4" x2="16" y2="11" stroke="#00F2FF" strokeWidth="1" strokeDasharray="2 2" />
-        <line x1="16" y1="21" x2="16" y2="28" stroke="#00F2FF" strokeWidth="1" strokeDasharray="2 2" />
+      /* Cricket Ball with AI brain icon */
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="14" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.06)" />
+        <path d="M10 18Q14 12 18 18Q22 24 26 18" stroke="#00F2FF" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <circle cx="14" cy="16" r="2" fill="#00F2FF" fillOpacity="0.4" />
+        <circle cx="22" cy="20" r="2" fill="#00F2FF" fillOpacity="0.4" />
+        <circle cx="18" cy="18" r="3" stroke="#2ECC71" strokeWidth="1" fill="rgba(46,204,113,0.15)" />
+        <circle cx="18" cy="18" r="1" fill="#2ECC71" />
       </svg>
     ),
     title: 'AI Analytics',
-    description: 'Our proprietary algorithms process decades of player data to generate dynamic, challenging guessing paths. Experience the future of cricket trivia.',
+    description: 'Our proprietary algorithms process decades of IPL player data — batting averages, strike rates, bowling economy — to generate challenging guessing paths.',
     stat: '99.2%',
     statLabel: 'PREDICTION RATE',
   },
   {
     id: 'realtime-stats',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="18" width="5" height="10" rx="1" fill="rgba(0,242,255,0.2)" stroke="#00F2FF" strokeWidth="1" />
-        <rect x="13.5" y="12" width="5" height="16" rx="1" fill="rgba(0,242,255,0.3)" stroke="#00F2FF" strokeWidth="1" />
-        <rect x="23" y="6" width="5" height="22" rx="1" fill="rgba(0,242,255,0.4)" stroke="#00F2FF" strokeWidth="1" />
-        <circle cx="6.5" cy="14" r="2" fill="#2ECC71" />
-        <circle cx="16" cy="8" r="2" fill="#2ECC71" />
-        <circle cx="25.5" cy="4" r="2" fill="#2ECC71" />
-        <line x1="6.5" y1="14" x2="16" y2="8" stroke="#2ECC71" strokeWidth="1" />
-        <line x1="16" y1="8" x2="25.5" y2="4" stroke="#2ECC71" strokeWidth="1" />
+      /* Scoreboard / Stats Chart */
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect x="4" y="4" width="28" height="28" rx="3" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.04)" />
+        <rect x="8" y="20" width="4" height="8" rx="1" fill="rgba(0,242,255,0.3)" />
+        <rect x="16" y="14" width="4" height="14" rx="1" fill="rgba(0,242,255,0.5)" />
+        <rect x="24" y="8" width="4" height="20" rx="1" fill="rgba(0,242,255,0.7)" />
+        <circle cx="10" cy="17" r="2" fill="#2ECC71" />
+        <circle cx="18" cy="11" r="2" fill="#2ECC71" />
+        <circle cx="26" cy="6" r="2" fill="#2ECC71" />
+        <line x1="10" y1="17" x2="18" y2="11" stroke="#2ECC71" strokeWidth="1" />
+        <line x1="18" y1="11" x2="26" y2="6" stroke="#2ECC71" strokeWidth="1" />
       </svg>
     ),
-    title: 'Real-time Stats',
-    description: 'Every match, every ball, every player. Data synchronized with live stadium action for unmatched precision.',
+    title: 'Live Match Stats',
+    description: 'Every match, every ball, every wicket. Data synchronized with live IPL action for unmatched precision in your guessing game.',
     stat: 'LIVE',
     statLabel: 'DATA SYNC',
   },
   {
     id: 'leaderboards',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4l3 6 7 1-5 5 1.2 7L16 19.5 9.8 23 11 16 6 11l7-1 3-6z" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.1)" />
-        <circle cx="16" cy="14" r="3" fill="#00F2FF" fillOpacity="0.3" />
+      /* Trophy / Leaderboard */
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M12 8h12v10c0 3.3-2.7 6-6 6s-6-2.7-6-6V8z" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.08)" />
+        <path d="M12 12H8c0 4 2 6 4 6" stroke="#00F2FF" strokeWidth="1" fill="none" />
+        <path d="M24 12h4c0 4-2 6-4 6" stroke="#00F2FF" strokeWidth="1" fill="none" />
+        <rect x="16" y="24" width="4" height="4" fill="#00F2FF" fillOpacity="0.3" />
+        <rect x="12" y="28" width="12" height="2" rx="1" fill="#00F2FF" fillOpacity="0.5" />
+        <text x="18" y="19" textAnchor="middle" fill="#00F2FF" fontSize="8" fontWeight="bold">🏆</text>
       </svg>
     ),
     title: 'Live Leaderboards',
-    description: 'Compete globally and climb the ranks of the command center. Real-time rankings updated every second.',
+    description: 'Compete with cricket fans worldwide. Climb the ranks and become the ultimate IPL oracle. Updated in real-time every second.',
     stat: '150K+',
     statLabel: 'COMPETITORS',
   },
   {
     id: 'sports-tech',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="4" width="24" height="24" rx="3" stroke="#00F2FF" strokeWidth="1.5" fill="none" />
-        <line x1="4" y1="12" x2="28" y2="12" stroke="#00F2FF" strokeWidth="1" strokeOpacity="0.3" />
-        <line x1="4" y1="20" x2="28" y2="20" stroke="#00F2FF" strokeWidth="1" strokeOpacity="0.3" />
-        <line x1="12" y1="4" x2="12" y2="28" stroke="#00F2FF" strokeWidth="1" strokeOpacity="0.3" />
-        <line x1="20" y1="4" x2="20" y2="28" stroke="#00F2FF" strokeWidth="1" strokeOpacity="0.3" />
-        <circle cx="16" cy="16" r="4" stroke="#2ECC71" strokeWidth="1.5" fill="rgba(46,204,113,0.15)" />
-        <circle cx="16" cy="16" r="1.5" fill="#2ECC71" />
+      /* Hawk-Eye / DRS style */
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect x="4" y="4" width="28" height="28" rx="3" stroke="#00F2FF" strokeWidth="1.5" fill="none" />
+        {/* Pitch lines */}
+        <rect x="14" y="6" width="8" height="24" rx="1" stroke="#2ECC71" strokeWidth="0.8" fill="rgba(46,204,113,0.06)" />
+        {/* Ball trajectory */}
+        <circle cx="18" cy="14" r="3" stroke="#FFB4AB" strokeWidth="1" fill="rgba(255,180,171,0.15)" />
+        <circle cx="18" cy="14" r="1" fill="#FFB4AB" />
+        <path d="M18 8L18 14L20 22" stroke="#FFB4AB" strokeWidth="1" strokeDasharray="2 1" opacity="0.6" />
+        {/* Crosshair */}
+        <line x1="18" y1="4" x2="18" y2="9" stroke="#00F2FF" strokeWidth="0.5" opacity="0.4" />
+        <line x1="18" y1="19" x2="18" y2="32" stroke="#00F2FF" strokeWidth="0.5" opacity="0.4" />
+        <line x1="4" y1="14" x2="15" y2="14" stroke="#00F2FF" strokeWidth="0.5" opacity="0.4" />
+        <line x1="21" y1="14" x2="32" y2="14" stroke="#00F2FF" strokeWidth="0.5" opacity="0.4" />
       </svg>
     ),
-    title: 'Pro Sports-Tech',
-    description: 'Designed for the elite fan who values precision over playfulness. Welcome to the Command Center.',
+    title: 'Hawk-Eye Tech',
+    description: 'Inspired by real DRS and Hawk-Eye systems used in international cricket. Experience broadcast-grade sports analytics at your fingertips.',
     stat: '4K+',
     statLabel: 'DATA POINTS',
   },
@@ -95,7 +110,7 @@ export default function TacticalAnalysis() {
 
       <div className="container">
         <div className="tactical__header">
-          <span className="section-label">// System Modules</span>
+          <span className="section-label">🏏 // Cricket Intelligence Modules</span>
           <h2 className="headline-xl" id="tactical-title">Tactical Analysis</h2>
           <p className="body-lg tactical__desc">
             Four core modules powering the most sophisticated cricket intelligence platform ever built.

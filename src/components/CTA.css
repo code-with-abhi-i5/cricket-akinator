@@ -1,5 +1,5 @@
 /* ==================
-   CTA Section
+   CTA Section — Cricket Theme
    ================== */
 
 .cta {
@@ -13,6 +13,32 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+
+/* Stadium aerial image */
+.cta__bg-stadium {
+  position: absolute;
+  inset: 0;
+}
+
+.cta__bg-stadium img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.15;
+  filter: saturate(1.3) blur(2px);
+}
+
+.cta__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 16, 0.95) 0%,
+    rgba(10, 12, 16, 0.6) 40%,
+    rgba(10, 12, 16, 0.6) 60%,
+    rgba(10, 12, 16, 0.95) 100%
+  );
 }
 
 .cta__bg-grid {
@@ -190,6 +216,10 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   color: var(--on-surface-variant);
+}
+
+.cta__ribbon-emoji {
+  font-size: 16px;
 }
 
 .cta__ribbon-sep {

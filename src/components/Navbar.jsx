@@ -15,23 +15,23 @@ export default function Navbar() {
   return (
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} id="main-nav">
       <div className="navbar__inner container">
-        {/* Logo */}
-        <a href="#" className="navbar__logo" id="nav-logo">
+        {/* Logo — Cricket Bat & Ball */}
+        <Link to="/" className="navbar__logo" id="nav-logo">
           <span className="navbar__logo-icon">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <circle cx="14" cy="14" r="12" stroke="#00F2FF" strokeWidth="2" />
-              <circle cx="14" cy="14" r="6" fill="#00F2FF" fillOpacity="0.3" />
-              <circle cx="14" cy="14" r="3" fill="#00F2FF" />
-              <line x1="14" y1="2" x2="14" y2="8" stroke="#00F2FF" strokeWidth="1.5" />
-              <line x1="14" y1="20" x2="14" y2="26" stroke="#00F2FF" strokeWidth="1.5" />
-              <line x1="2" y1="14" x2="8" y2="14" stroke="#00F2FF" strokeWidth="1.5" />
-              <line x1="20" y1="14" x2="26" y2="14" stroke="#00F2FF" strokeWidth="1.5" />
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              {/* Cricket Ball */}
+              <circle cx="10" cy="10" r="7" stroke="#00F2FF" strokeWidth="1.5" fill="rgba(0,242,255,0.08)" />
+              <path d="M5.5 5.5Q10 10.5 14.5 14.5" stroke="#00F2FF" strokeWidth="1" strokeDasharray="1.5 1.5" opacity="0.6" />
+              <circle cx="10" cy="10" r="2.5" fill="#00F2FF" fillOpacity="0.4" />
+              {/* Cricket Bat */}
+              <rect x="18" y="14" width="4" height="14" rx="1.5" fill="rgba(0,242,255,0.15)" stroke="#00F2FF" strokeWidth="1" transform="rotate(-20 20 21)" />
+              <rect x="19" y="27" width="2" height="4" rx="1" fill="#00F2FF" fillOpacity="0.5" transform="rotate(-20 20 29)" />
             </svg>
           </span>
           <span className="navbar__logo-text">
             CRIC<span className="navbar__logo-accent">GUESS</span> AI
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <ul className="navbar__links" id="nav-links">
@@ -44,7 +44,7 @@ export default function Navbar() {
         <div className="navbar__actions">
           <div className="navbar__status" id="nav-status">
             <span className="navbar__status-dot"></span>
-            <span className="navbar__status-text">LIVE</span>
+            <span className="navbar__status-text">🏏 LIVE</span>
           </div>
           <Link to="/guess" className="btn-tactical btn-primary navbar__cta" id="nav-cta">
             Launch Game

@@ -88,57 +88,80 @@ export default function Hero() {
 
   return (
     <section className="hero" id="hero" ref={heroRef} onMouseMove={handleMouseMove}>
-      {/* Background Elements */}
+      {/* Stadium Background Image */}
       <div className="hero__bg">
+        <div className="hero__stadium-img">
+          <img src="/images/cricket-stadium-hero.png" alt="" aria-hidden="true" />
+        </div>
+        <div className="hero__stadium-overlay"></div>
         <div className="hero__grid" style={{ transform: `translate(${mousePos.x * -20}px, ${mousePos.y * -20}px)` }}></div>
         <div className="hero__vignette"></div>
         <div className="hero__glow hero__glow--1" style={{ transform: `translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)` }}></div>
         <div className="hero__glow hero__glow--2" style={{ transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)` }}></div>
-        <div className="hero__pitch-wrapper" style={{ transform: `translate(calc(-50% + ${mousePos.x * 40}px), calc(-50% + ${mousePos.y * 40}px))` }}>
-          <div className="hero__pitch-tracker">
-            {/* Pitch Area */}
-            <div className="pitch-surface"></div>
-            
-            {/* Creases */}
-            <div className="pitch-crease pitch-crease--top"></div>
-            <div className="pitch-crease pitch-crease--bottom"></div>
-            
-            {/* Stumps */}
-            <div className="stumps stumps--top">
-              <div className="stump"></div><div className="stump"></div><div className="stump"></div>
-            </div>
-            <div className="stumps stumps--bottom">
-              <div className="stump"></div><div className="stump"></div><div className="stump"></div>
-            </div>
 
-            {/* Hawk-Eye Trajectory */}
-            <div className="hawk-eye-track">
-              <div className="ball-bounce"></div>
-              <div className="ball-path"></div>
-              <div className="ball-current"></div>
-            </div>
-          </div>
+        {/* Floating Cricket Ball */}
+        <div className="hero__cricket-ball" style={{ transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)` }}>
+          <img src="/images/cricket-ball.png" alt="" aria-hidden="true" />
         </div>
 
-        {/* Floating Widgets */}
+        {/* Batsman Silhouette */}
+        <div className="hero__batsman" style={{ transform: `translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)` }}>
+          <img src="/images/batsman-silhouette.png" alt="" aria-hidden="true" />
+        </div>
+
+        {/* Animated Cricket Stumps SVG */}
+        <div className="hero__stumps-deco hero__stumps-deco--left" style={{ transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px)` }}>
+          <svg viewBox="0 0 60 120" fill="none">
+            <rect x="10" y="20" width="4" height="80" rx="2" fill="url(#stumpGrad)" />
+            <rect x="28" y="20" width="4" height="80" rx="2" fill="url(#stumpGrad)" />
+            <rect x="46" y="20" width="4" height="80" rx="2" fill="url(#stumpGrad)" />
+            {/* Bails */}
+            <rect x="8" y="16" width="24" height="3" rx="1.5" fill="#00F2FF" opacity="0.8" />
+            <rect x="26" y="16" width="24" height="3" rx="1.5" fill="#00F2FF" opacity="0.8" />
+            <defs>
+              <linearGradient id="stumpGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00F2FF" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#00F2FF" stopOpacity="0.1" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        {/* Floating Widgets - Cricket themed */}
         <div className="hero__floating-widget widget-1" style={{ transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)` }}>
           <span className="widget-icon">🏏</span>
-          [ PITCH MAP: GOOD LENGTH ]
+          <span className="widget-data">
+            <span className="widget-label">STRIKE RATE</span>
+            <span className="widget-value">158.42</span>
+          </span>
         </div>
         <div className="hero__floating-widget widget-2" style={{ transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -30}px)` }}>
-          <span className="widget-icon">⚡</span>
-          [ SPIN RATE: 2400 RPM ]
+          <span className="widget-icon">🎯</span>
+          <span className="widget-data">
+            <span className="widget-label">ECONOMY</span>
+            <span className="widget-value">6.82</span>
+          </span>
         </div>
         <div className="hero__floating-widget widget-3" style={{ transform: `translate(${mousePos.x * 20}px, ${mousePos.y * -20}px)` }}>
-          <span className="widget-icon">🎯</span>
-          [ IMPACT: IN-LINE ]
+          <span className="widget-icon">⚡</span>
+          <span className="widget-data">
+            <span className="widget-label">SPEED</span>
+            <span className="widget-value">148.3 KPH</span>
+          </span>
+        </div>
+        <div className="hero__floating-widget widget-4" style={{ transform: `translate(${mousePos.x * -40}px, ${mousePos.y * 30}px)` }}>
+          <span className="widget-icon">🏆</span>
+          <span className="widget-data">
+            <span className="widget-label">IPL TITLES</span>
+            <span className="widget-value">5</span>
+          </span>
         </div>
       </div>
 
       <div className="container hero__content">
         <div className="hero__badge" id="hero-badge">
           <span className="hero__badge-dot"></span>
-          <span>COMMAND CENTER — SEASON 2026</span>
+          <span>🏏 IPL COMMAND CENTER — SEASON 2026</span>
         </div>
 
         <h1 className="hero__title" id="hero-title">
@@ -165,21 +188,25 @@ export default function Hero() {
         {/* Stats Bar */}
         <div className="hero__stats" id="hero-stats">
           <div className="hero__stat">
+            <span className="hero__stat-icon">🏏</span>
             <span className="hero__stat-value stat-value"><StatCounter end={2.4} isFloat={true} suffix="M+" /></span>
             <span className="hero__stat-label">Games Played</span>
           </div>
           <div className="hero__stat-divider"></div>
           <div className="hero__stat">
+            <span className="hero__stat-icon">👥</span>
             <span className="hero__stat-value stat-value"><StatCounter end={150} suffix="K+" /></span>
             <span className="hero__stat-label">Active Players</span>
           </div>
           <div className="hero__stat-divider"></div>
           <div className="hero__stat">
+            <span className="hero__stat-icon">🎯</span>
             <span className="hero__stat-value stat-value"><StatCounter end={98.7} isFloat={true} suffix="%" /></span>
             <span className="hero__stat-label">AI Accuracy</span>
           </div>
           <div className="hero__stat-divider"></div>
           <div className="hero__stat">
+            <span className="hero__stat-icon">🏆</span>
             <span className="hero__stat-value stat-value">IPL 2026</span>
             <span className="hero__stat-label">Current Season</span>
           </div>
