@@ -109,68 +109,7 @@
   animation: float 10s ease-in-out infinite reverse;
 }
 
-/* ====== Cricket Ball Floating ====== */
-.hero__cricket-ball {
-  position: absolute;
-  bottom: 18%;
-  right: 8%;
-  width: 120px;
-  height: 120px;
-  z-index: 5;
-  pointer-events: none;
-  animation: cricketBallFloat 6s ease-in-out infinite, fadeInUp 1.2s 0.8s both;
-  filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
-}
 
-.hero__cricket-ball img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  animation: cricketBallSpin 15s linear infinite;
-}
-
-@keyframes cricketBallFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes cricketBallSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ====== Batsman Silhouette ====== */
-.hero__batsman {
-  position: absolute;
-  bottom: 0;
-  right: 2%;
-  width: 380px;
-  height: auto;
-  z-index: 5;
-  pointer-events: none;
-  opacity: 0;
-  animation: batsmanReveal 1.5s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hero__batsman img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter: brightness(0.7) contrast(1.3) saturate(1.3);
-  mask-image: linear-gradient(to top, transparent 0%, black 20%);
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 20%);
-}
-
-@keyframes batsmanReveal {
-  from {
-    opacity: 0;
-    transform: translateX(60px) scale(0.95);
-  }
-  to {
-    opacity: 0.6;
-    transform: translateX(0) scale(1);
-  }
-}
 
 /* ====== Cricket Stumps Decoration ====== */
 .hero__stumps-deco {
@@ -481,17 +420,7 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .hero__batsman {
-    width: 280px;
-    right: -2%;
-  }
 
-  .hero__cricket-ball {
-    width: 80px;
-    height: 80px;
-    right: 5%;
-    bottom: 25%;
-  }
 }
 
 @media (max-width: 768px) {
@@ -509,18 +438,7 @@
     flex: 1 1 40%;
   }
 
-  .hero__batsman {
-    width: 200px;
-    opacity: 0.3;
-    right: -5%;
-  }
 
-  .hero__cricket-ball {
-    width: 60px;
-    height: 60px;
-    bottom: 30%;
-    right: 3%;
-  }
 
   .hero__stumps-deco {
     display: none;

@@ -99,15 +99,7 @@ export default function Hero() {
         <div className="hero__glow hero__glow--1" style={{ transform: `translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)` }}></div>
         <div className="hero__glow hero__glow--2" style={{ transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)` }}></div>
 
-        {/* Floating Cricket Ball */}
-        <div className="hero__cricket-ball" style={{ transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)` }}>
-          <img src="/images/cricket-ball.png" alt="" aria-hidden="true" />
-        </div>
 
-        {/* Batsman Silhouette */}
-        <div className="hero__batsman" style={{ transform: `translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)` }}>
-          <img src="/images/batsman-silhouette.png" alt="" aria-hidden="true" />
-        </div>
 
         {/* Animated Cricket Stumps SVG */}
         <div className="hero__stumps-deco hero__stumps-deco--left" style={{ transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px)` }}>
