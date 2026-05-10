@@ -2,6 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Hero.css';
 
+// Player data for carousel
+const HERO_PLAYERS = [
+  { name: '???', team: 'CSK', abbr: 'MSD', color: '#F2C94C', role: 'WK-Batsman', stat1: '5 Titles', stat2: '5082 Runs', stat3: 'Captain Cool' },
+  { name: '???', team: 'RCB', abbr: 'VK', color: '#EB5757', role: 'Batsman', stat1: '7263 Runs', stat2: 'Top Scorer', stat3: 'Run Machine' },
+  { name: '???', team: 'MI', abbr: 'RO', color: '#2D9CDB', role: 'Batsman', stat1: '5 Titles', stat2: '6211 Runs', stat3: 'Hitman' },
+  { name: '???', team: 'GT', abbr: 'RK', color: '#8B5CF6', role: 'Bowler', stat1: '500+ Wkts', stat2: 'Leg Spin', stat3: 'Afghan Express' },
+];
+
 // Counter Component
 const StatCounter = ({ end, suffix = '', duration = 2000, isFloat = false }) => {
   const [count, setCount] = useState(0);
@@ -62,6 +70,15 @@ const TypewriterText = ({ text, delay = 0 }) => {
 export default function Hero() {
   const heroRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [activePlayer, setActivePlayer] = useState(0);
+
+  // Auto-rotate player cards
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActivePlayer(prev => (prev + 1) % HERO_PLAYERS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -99,6 +116,43 @@ export default function Hero() {
         <div className="hero__glow hero__glow--1" style={{ transform: `translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)` }}></div>
         <div className="hero__glow hero__glow--2" style={{ transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)` }}></div>
 
+        {/* Stadium Spotlights */}
+        <div className="hero__spotlight hero__spotlight--left"></div>
+        <div className="hero__spotlight hero__spotlight--right"></div>
+
+        {/* Floating Particles */}
+        <div className="hero__particles">
+          {[...Array(15)].map((_, i) => (
+            <div key={i} className={`particle particle-${i}`}></div>
+          ))}
+        </div>
+
+        {/* Tech HUD Ring */}
+        <div className="hero__hud-ring" style={{ transform: `translate(-50%, -50%) rotate(${mousePos.x * 10}deg) scale(${1 + mousePos.y * 0.1})` }}></div>
+
+
+        {/* CSS Cricket Ball */}
+        <div className="hero__css-ball" style={{ transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)` }}>
+          <div className="css-ball-body">
+            <div className="css-ball-seam"></div>
+            <div className="css-ball-seam css-ball-seam--2"></div>
+            <div className="css-ball-shine"></div>
+          </div>
+        </div>
+
+        {/* Who Am I? Mystery Card */}
+        <div className="hero__mystery-card" style={{ transform: `translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)` }}>
+          <div className="mystery-card-inner">
+            <div className="mystery-card-glow"></div>
+            <div className="mystery-q">?</div>
+            <div className="mystery-stats">
+              <div className="mystery-stat-row"><span className="mystery-label">ROLE</span><span className="mystery-blur">██████</span></div>
+              <div className="mystery-stat-row"><span className="mystery-label">TEAM</span><span className="mystery-blur">████████</span></div>
+              <div className="mystery-stat-row"><span className="mystery-label">RUNS</span><span className="mystery-blur">█████</span></div>
+            </div>
+            <div className="mystery-footer">CAN YOU GUESS?</div>
+          </div>
+        </div>
 
 
         {/* Animated Cricket Stumps SVG */}
@@ -164,6 +218,35 @@ export default function Hero() {
         <p className="hero__subtitle body-lg" id="hero-subtitle">
           <TypewriterText text="The most advanced AI-powered IPL player guessing platform. Analyze stats, track performance, and prove your cricket IQ." delay={1000} />
         </p>
+
+        {/* Player Cards Carousel */}
+        <div className="hero__player-carousel" id="hero-carousel">
+          {HERO_PLAYERS.map((p, i) => (
+            <div
+              key={i}
+              className={`hero__player-card ${i === activePlayer ? 'active' : ''}`}
+              style={{ '--card-color': p.color }}
+            >
+              <div className="hpc-avatar" style={{ background: `radial-gradient(circle at 30% 30%, ${p.color}60, #0B0E14)` }}>
+                {p.abbr}
+              </div>
+              <div className="hpc-info">
+                <div className="hpc-name">{p.name}</div>
+                <div className="hpc-team" style={{ color: p.color }}>{p.team} · {p.role}</div>
+                <div className="hpc-stats">
+                  <span>{p.stat1}</span>
+                  <span>·</span>
+                  <span>{p.stat2}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="hero__carousel-dots">
+            {HERO_PLAYERS.map((_, i) => (
+              <button key={i} className={`carousel-dot ${i === activePlayer ? 'active' : ''}`} onClick={() => setActivePlayer(i)} />
+            ))}
+          </div>
+        </div>
 
         <div className="hero__actions" id="hero-actions">
           <Link to="/guess" className="btn-tactical btn-primary">

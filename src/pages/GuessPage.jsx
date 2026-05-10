@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
@@ -32,9 +32,109 @@ const BTNS = [
   { label: "DON'T KNOW", icon: "?", key: "dk", bg: "linear-gradient(135deg, #94A3B8 0%, #475569 100%)", shadow: "rgba(71, 85, 105, 0.4)" },
 ];
 
-// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+// ─── MOCK CANDIDATE POOL ─────────────────────────────────────────────────────
+const ALL_CANDIDATES = [
+  { name: "MS Dhoni", team: "CSK", role: "WK-Bat" },
+  { name: "Virat Kohli", team: "RCB", role: "Batsman" },
+  { name: "Rohit Sharma", team: "MI", role: "Batsman" },
+  { name: "AB de Villiers", team: "RCB", role: "Batsman" },
+  { name: "Jasprit Bumrah", team: "MI", role: "Bowler" },
+  { name: "Suryakumar Yadav", team: "MI", role: "Batsman" },
+  { name: "KL Rahul", team: "LSG", role: "WK-Bat" },
+  { name: "Hardik Pandya", team: "MI", role: "All-Rounder" },
+  { name: "Ravindra Jadeja", team: "CSK", role: "All-Rounder" },
+  { name: "Rashid Khan", team: "GT", role: "Bowler" },
+  { name: "Jos Buttler", team: "RR", role: "WK-Bat" },
+  { name: "Faf du Plessis", team: "RCB", role: "Batsman" },
+  { name: "David Warner", team: "DC", role: "Batsman" },
+  { name: "Rishabh Pant", team: "DC", role: "WK-Bat" },
+  { name: "Shreyas Iyer", team: "KKR", role: "Batsman" },
+  { name: "Sanju Samson", team: "RR", role: "WK-Bat" },
+  { name: "Yuzvendra Chahal", team: "RR", role: "Bowler" },
+  { name: "Bhuvneshwar Kumar", team: "SRH", role: "Bowler" },
+  { name: "Mohammed Shami", team: "GT", role: "Bowler" },
+  { name: "Kagiso Rabada", team: "PBKS", role: "Bowler" },
+  { name: "Pat Cummins", team: "SRH", role: "Bowler" },
+  { name: "Ruturaj Gaikwad", team: "CSK", role: "Batsman" },
+  { name: "Shubman Gill", team: "GT", role: "Batsman" },
+  { name: "Ishan Kishan", team: "MI", role: "WK-Bat" },
+  { name: "Rinku Singh", team: "KKR", role: "Batsman" },
+  { name: "Yashasvi Jaiswal", team: "RR", role: "Batsman" },
+  { name: "Axar Patel", team: "DC", role: "All-Rounder" },
+  { name: "Kuldeep Yadav", team: "DC", role: "Bowler" },
+  { name: "Arshdeep Singh", team: "PBKS", role: "Bowler" },
+  { name: "Trent Boult", team: "RR", role: "Bowler" },
+  { name: "Glenn Maxwell", team: "RCB", role: "All-Rounder" },
+  { name: "Andre Russell", team: "KKR", role: "All-Rounder" },
+  { name: "Sunil Narine", team: "KKR", role: "All-Rounder" },
+  { name: "Chris Gayle", team: "RCB", role: "Batsman" },
+  { name: "Dwayne Bravo", team: "CSK", role: "All-Rounder" },
+  { name: "Lasith Malinga", team: "MI", role: "Bowler" },
+  { name: "Gautam Gambhir", team: "KKR", role: "Batsman" },
+  { name: "Robin Uthappa", team: "CSK", role: "Batsman" },
+  { name: "Shane Watson", team: "CSK", role: "All-Rounder" },
+  { name: "Mayank Agarwal", team: "PBKS", role: "Batsman" },
+];
 
-function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking }) {
+const TOTAL_POOL = 487;
+
+function getCandidateSnapshot(qIndex, confidence) {
+  const remaining = Math.max(1, Math.round(TOTAL_POOL * (1 - confidence / 100)));
+  const topCount = Math.min(5, Math.max(1, Math.ceil(5 * (1 - confidence / 120))));
+  const seed = qIndex * 7;
+  const sorted = [...ALL_CANDIDATES].sort((a, b) => {
+    const ha = (a.name.charCodeAt(0) * 31 + seed) % 100;
+    const hb = (b.name.charCodeAt(0) * 31 + seed) % 100;
+    return hb - ha;
+  });
+  return { remaining, topCandidates: sorted.slice(0, topCount), totalPool: TOTAL_POOL };
+}
+
+// ─── CANDIDATE POOL COMPONENT ───────────────────────────────────────────────
+function CandidatePool({ snapshot, qIndex }) {
+  const { remaining, topCandidates, totalPool } = snapshot;
+  const narrowPct = ((totalPool - remaining) / totalPool) * 100;
+
+  return (
+    <div className="glass-panel side-panel">
+      <div className="section-label" style={{ color: '#10B981' }}>◈ LIVE SQUAD TRACKER</div>
+      <div className="panel-content">
+        <div className="pool-count-wrap">
+          <div className="pool-count" key={remaining}>{remaining}</div>
+          <div className="pool-count-label">PLAYERS REMAINING</div>
+          <div className="pool-count-sub">out of {totalPool}</div>
+        </div>
+
+        <div className="pool-narrow-bar">
+          <div className="pool-narrow-fill" style={{ width: `${narrowPct}%` }}></div>
+        </div>
+        <div className="pool-narrow-meta">
+          <span>ELIMINATED</span>
+          <span style={{ color: '#EF4444' }}>{Math.round(narrowPct)}%</span>
+        </div>
+
+        <div className="pool-divider"></div>
+
+        <div className="pool-top-label">🎯 TOP SUSPECTS</div>
+        <div className="pool-candidates" key={qIndex}>
+          {topCandidates.map((c, i) => (
+            <div key={c.name} className="pool-candidate" style={{ animationDelay: `${i * 0.08}s` }}>
+              <div className="pool-candidate-rank">#{i + 1}</div>
+              <div className="pool-candidate-info">
+                <div className="pool-candidate-name">{c.name}</div>
+                <div className="pool-candidate-meta">{c.team} · {c.role}</div>
+              </div>
+              <div className="pool-candidate-dot"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── GAME SCREEN ─────────────────────────────────────────────────────────────
+function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking, candidateSnapshot }) {
   return (
     <div className="container guess-game-grid">
       {/* LEFT SIDEBAR */}
@@ -133,14 +233,14 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking 
         </div>
       </div>
 
-      {/* RIGHT: AI Stats */}
+      {/* RIGHT: AI Stats + Candidate Pool */}
       <div className="guess-sidebar guess-sidebar--right">
         <div className="glass-panel side-panel">
           <div className="section-label" style={{ color: '#3B82F6' }}>◈ MATCH STATUS</div>
           <div className="panel-content">
             <div className="ai-stat-row">
                <div className="ai-stat-lbl">Squad Remaining</div>
-               <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{Math.max(1, Math.round(500 * (1 - confidence / 100)))}</div>
+               <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{candidateSnapshot.remaining}</div>
             </div>
             <div className="progress-thin"><div className="progress-fill" style={{ width: `${100-confidence}%`, background: '#3B82F6' }}></div></div>
 
@@ -158,26 +258,14 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking 
           </div>
         </div>
 
-        <div className="glass-panel side-panel">
-          <div className="section-label" style={{ color: '#F59E0B' }}>◈ DRS SCAN</div>
-          <div className="panel-content" style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-             <div className="large-scan-circle">
-                <svg className="circular-chart" viewBox="0 0 36 36">
-                   <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                   <path className="circle" strokeDasharray={`${confidence}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                </svg>
-                <div className="scan-inner">
-                  <span className="scan-val">{confidence}%</span>
-                  <span className="scan-lbl">CONF</span>
-                </div>
-             </div>
-          </div>
-        </div>
+        {/* Live Candidate Pool */}
+        <CandidatePool snapshot={candidateSnapshot} qIndex={qIndex} />
       </div>
     </div>
   );
 }
 
+// ─── GUESS SCREEN ────────────────────────────────────────────────────────────
 function GuessScreen({ player, confidence, onCorrect, onWrong }) {
   const [phase, setPhase] = useState("reveal");
 
@@ -205,7 +293,7 @@ function GuessScreen({ player, confidence, onCorrect, onWrong }) {
 
       {phase === "reveal" && (
         <div className="reveal-actions">
-          <button className="btn-tactical" style={{ background: 'rgba(46, 204, 113, 0.1)', color: 'var(--color-success)', borderColor: 'var(--color-success)' }} onClick={onCorrect}>
+          <button className="btn-tactical" style={{ background: 'rgba(46, 204, 113, 0.1)', color: 'var(--color-success)', borderColor: 'var(--color-success)' }} onClick={() => onCorrect(true)}>
             ✓ CORRECT!
           </button>
           <button className="btn-tactical" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#EF4444', borderColor: '#EF4444' }} onClick={() => setPhase("wrong")}>
@@ -219,11 +307,81 @@ function GuessScreen({ player, confidence, onCorrect, onWrong }) {
           <div className="section-label" style={{ color: '#EF4444', marginBottom: '12px' }}>◈ NEURAL LEARNING MODE</div>
           <p className="body-lg" style={{ marginBottom: '16px' }}>Who were you thinking of? Help me learn!</p>
           <input type="text" placeholder="Enter player name..." style={{ width: '100%', padding: '12px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontFamily: 'var(--font-sans)', marginBottom: '16px', outline: 'none' }} />
-          <button className="btn-tactical btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={onCorrect}>
+          <button className="btn-tactical btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => onCorrect(false)}>
             SUBMIT & TEACH AI
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── RESULTS SCREEN ──────────────────────────────────────────────────────────
+function ResultsScreen({ player, confidence, questionsAsked, timeTakenSec, isCorrect, onPlayAgain }) {
+  const mins = Math.floor(timeTakenSec / 60);
+  const secs = timeTakenSec % 60;
+  const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
+  const grade = isCorrect
+    ? (questionsAsked <= 3 ? 'S+' : questionsAsked <= 5 ? 'A' : questionsAsked <= 7 ? 'B+' : 'B')
+    : 'C';
+
+  return (
+    <div className="container results-screen">
+      {/* Verdict Banner */}
+      <div className={`results-verdict ${isCorrect ? 'verdict-win' : 'verdict-lose'}`}>
+        <div className="verdict-emoji">{isCorrect ? '🏆' : '😅'}</div>
+        <h1 className="results-verdict-title">{isCorrect ? 'MATCH WON!' : 'MATCH DRAWN'}</h1>
+        <p className="results-verdict-sub">
+          {isCorrect
+            ? `AI cracked it in just ${questionsAsked} questions!`
+            : "The AI couldn't crack this one. It'll learn for next time!"}
+        </p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="results-stats-grid">
+        <div className="results-stat glass-panel">
+          <div className="results-stat-icon">❓</div>
+          <div className="results-stat-val">{questionsAsked}</div>
+          <div className="results-stat-lbl">QUESTIONS</div>
+        </div>
+        <div className="results-stat glass-panel">
+          <div className="results-stat-icon">⏱️</div>
+          <div className="results-stat-val">{timeStr}</div>
+          <div className="results-stat-lbl">TIME TAKEN</div>
+        </div>
+        <div className="results-stat glass-panel">
+          <div className="results-stat-icon">🎯</div>
+          <div className="results-stat-val">{confidence}%</div>
+          <div className="results-stat-lbl">CONFIDENCE</div>
+        </div>
+        <div className="results-stat glass-panel">
+          <div className="results-stat-icon">📊</div>
+          <div className="results-stat-val">{grade}</div>
+          <div className="results-stat-lbl">AI GRADE</div>
+        </div>
+      </div>
+
+      {/* Player Card */}
+      <div className="results-player glass-panel">
+        <div className="section-label" style={{ color: player.color, marginBottom: '16px' }}>◈ FINAL ANSWER</div>
+        <div className="results-player-avatar" style={{ background: `radial-gradient(circle at 30% 30%, ${player.color}40, #0B0E14)`, borderColor: player.color }}>
+          {player.abbr}
+        </div>
+        <div className="results-player-flag">{player.flag}</div>
+        <h2 className="results-player-name">{player.name}</h2>
+        <div className="results-player-team" style={{ color: player.color }}>{player.team}</div>
+        <div className="results-player-role">{player.role}</div>
+      </div>
+
+      {/* Play Again */}
+      <div className="results-actions">
+        <button className="btn-play-again" onClick={onPlayAgain}>
+          <span>🏏</span>
+          <span>PLAY AGAIN</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -236,12 +394,15 @@ export default function GuessPage() {
   const [history, setHistory] = useState([]);
   const [thinking, setThinking] = useState(false);
   const [player, setPlayer] = useState(null);
+  const [startTime] = useState(() => Math.floor(Date.now() / 1000));
+  const [endTime, setEndTime] = useState(null);
+  const [gameResult, setGameResult] = useState(null);
+  const [candidateSnapshot, setCandidateSnapshot] = useState(() => getCandidateSnapshot(0, 12));
 
   const handleAnswer = (key, label) => {
     if (thinking) return;
     setThinking(true);
     
-    // Logic translated from snippet
     const gain = key === "yes" ? 18 : key === "no" ? 16 : key === "maybe" ? 9 : 5;
     const noise = Math.floor(Math.random() * 8);
     const newConf = Math.min(97, confidence + gain + noise);
@@ -250,16 +411,22 @@ export default function GuessPage() {
     setTimeout(() => {
       setConfidence(newConf);
       setHistory(newHistory);
+      setCandidateSnapshot(getCandidateSnapshot(qIndex + 1, newConf));
       
       if (newConf >= 80 || qIndex >= QUESTIONS.length - 1) {
-        // Randomly pick a player for the mock guess
         setPlayer(PLAYERS[Math.floor(Math.random() * PLAYERS.length)]);
         setScreen("guess");
       } else {
         setQIndex(qIndex + 1);
       }
       setThinking(false);
-    }, 800 + Math.random() * 400); // Simulated network delay
+    }, 800 + Math.random() * 400);
+  };
+
+  const handleGuessResult = (wasCorrect) => {
+    setEndTime(Math.floor(Date.now() / 1000));
+    setGameResult(wasCorrect);
+    setScreen("results");
   };
 
   const reset = () => {
@@ -269,17 +436,83 @@ export default function GuessPage() {
     setHistory([]);
     setThinking(false);
     setPlayer(null);
+    setEndTime(null);
+    setGameResult(null);
+    setCandidateSnapshot(getCandidateSnapshot(0, 12));
   };
+
+  const timeTakenSec = endTime ? endTime - startTime : 0;
 
   return (
     <>
       <Navbar />
       <div className="guess-page">
-        {/* Ambient background glow for this page */}
         <div className="guess-bg">
           <div className="guess-bg-glow"></div>
-        </div>
 
+          {/* Wagon Wheel / Pitch Map Background */}
+          <div className="wagon-wheel-wrap">
+            <svg className="wagon-wheel-svg" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Outer field boundary */}
+              <circle cx="300" cy="300" r="280" stroke="rgba(0,242,255,0.08)" strokeWidth="1.5" />
+              <circle cx="300" cy="300" r="220" stroke="rgba(0,242,255,0.06)" strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="300" cy="300" r="160" stroke="rgba(0,242,255,0.05)" strokeWidth="1" />
+              <circle cx="300" cy="300" r="100" stroke="rgba(0,242,255,0.07)" strokeWidth="1" strokeDasharray="4 6" />
+              <circle cx="300" cy="300" r="40" stroke="rgba(0,242,255,0.06)" strokeWidth="1" />
+
+              {/* 30-yard circle */}
+              <circle cx="300" cy="300" r="130" stroke="rgba(245,158,11,0.08)" strokeWidth="1.5" strokeDasharray="8 4" />
+
+              {/* Pitch rectangle */}
+              <rect x="292" y="240" width="16" height="120" rx="2" stroke="rgba(0,242,255,0.12)" strokeWidth="1" fill="rgba(0,242,255,0.02)" />
+              {/* Crease lines */}
+              <line x1="280" y1="255" x2="320" y2="255" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+              <line x1="280" y1="345" x2="320" y2="345" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+
+              {/* Wagon wheel spokes — field zones */}
+              <line x1="300" y1="300" x2="300" y2="20" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="498" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="580" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="498" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="300" y2="580" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="102" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="20" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+              <line x1="300" y1="300" x2="102" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+
+              {/* Zone labels */}
+              <text x="300" y="50" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">STRAIGHT</text>
+              <text x="540" y="300" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">POINT</text>
+              <text x="300" y="565" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">FINE LEG</text>
+              <text x="60" y="300" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">MID-ON</text>
+              <text x="475" y="120" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">COVER</text>
+              <text x="475" y="490" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">SQUARE</text>
+              <text x="125" y="490" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">LEG</text>
+              <text x="125" y="120" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">MID-WKT</text>
+
+              {/* Shot dots — simulated wagon wheel hits */}
+              <circle cx="340" cy="120" r="3" fill="rgba(16,185,129,0.25)" />
+              <circle cx="420" cy="180" r="2.5" fill="rgba(245,158,11,0.2)" />
+              <circle cx="460" cy="260" r="3" fill="rgba(16,185,129,0.25)" />
+              <circle cx="380" cy="350" r="2" fill="rgba(239,68,68,0.2)" />
+              <circle cx="200" cy="200" r="3" fill="rgba(16,185,129,0.25)" />
+              <circle cx="180" cy="380" r="2.5" fill="rgba(245,158,11,0.2)" />
+              <circle cx="250" cy="150" r="2" fill="rgba(0,242,255,0.2)" />
+              <circle cx="350" cy="450" r="3" fill="rgba(16,185,129,0.2)" />
+              <circle cx="150" cy="280" r="2.5" fill="rgba(239,68,68,0.2)" />
+              <circle cx="430" cy="400" r="2" fill="rgba(0,242,255,0.2)" />
+
+              {/* Center dot */}
+              <circle cx="300" cy="300" r="4" fill="rgba(0,242,255,0.15)" />
+              <circle cx="300" cy="300" r="8" stroke="rgba(0,242,255,0.1)" strokeWidth="0.8" fill="none" />
+            </svg>
+
+            {/* Radar Sweep */}
+            <div className="radar-sweep"></div>
+
+            {/* Scan line */}
+            <div className="radar-scanline"></div>
+          </div>
+        </div>
 
         {screen === "game" && (
           <GameScreen
@@ -289,14 +522,24 @@ export default function GuessPage() {
             history={history}
             onAnswer={handleAnswer}
             thinking={thinking}
+            candidateSnapshot={candidateSnapshot}
           />
         )}
         {screen === "guess" && player && (
           <GuessScreen
             player={player}
             confidence={confidence}
-            onCorrect={reset}
-            onWrong={() => {}}
+            onCorrect={handleGuessResult}
+          />
+        )}
+        {screen === "results" && player && (
+          <ResultsScreen
+            player={player}
+            confidence={confidence}
+            questionsAsked={history.length}
+            timeTakenSec={timeTakenSec}
+            isCorrect={gameResult}
+            onPlayAgain={reset}
           />
         )}
       </div>
