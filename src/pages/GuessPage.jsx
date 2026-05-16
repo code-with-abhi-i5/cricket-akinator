@@ -26,10 +26,9 @@ const PLAYERS = [
 ];
 
 const BTNS = [
-  { label: "YES", icon: "✓", key: "yes", bg: "linear-gradient(135deg, #34D399 0%, #10B981 100%)", shadow: "rgba(16, 185, 129, 0.4)" },
-  { label: "NO", icon: "✕", key: "no", bg: "linear-gradient(135deg, #FB7185 0%, #E11D48 100%)", shadow: "rgba(225, 29, 72, 0.4)" },
-  { label: "MAYBE", icon: "~", key: "maybe", bg: "linear-gradient(135deg, #FBBF24 0%, #D97706 100%)", shadow: "rgba(217, 119, 6, 0.4)" },
-  { label: "DON'T KNOW", icon: "?", key: "dk", bg: "linear-gradient(135deg, #94A3B8 0%, #475569 100%)", shadow: "rgba(71, 85, 105, 0.4)" },
+  { label: "YES (HOWZAT!)", icon: "☝🏽", key: "yes", bg: "linear-gradient(135deg, #34D399 0%, #10B981 100%)", shadow: "rgba(16, 185, 129, 0.4)" },
+  { label: "NO (NOT OUT!)", icon: "🙅🏽‍♂️", key: "no", bg: "linear-gradient(135deg, #FB7185 0%, #E11D48 100%)", shadow: "rgba(225, 29, 72, 0.4)" },
+  { label: "MAYBE (DRS REVIEW)", icon: "📺", key: "maybe", bg: "linear-gradient(135deg, #FBBF24 0%, #D97706 100%)", shadow: "rgba(217, 119, 6, 0.4)" },
 ];
 
 // ─── MOCK CANDIDATE POOL ─────────────────────────────────────────────────────
@@ -90,48 +89,6 @@ function getCandidateSnapshot(qIndex, confidence) {
   return { remaining, topCandidates: sorted.slice(0, topCount), totalPool: TOTAL_POOL };
 }
 
-// ─── CANDIDATE POOL COMPONENT ───────────────────────────────────────────────
-function CandidatePool({ snapshot, qIndex }) {
-  const { remaining, topCandidates, totalPool } = snapshot;
-  const narrowPct = ((totalPool - remaining) / totalPool) * 100;
-
-  return (
-    <div className="glass-panel side-panel">
-      <div className="section-label" style={{ color: '#10B981' }}>◈ LIVE SQUAD TRACKER</div>
-      <div className="panel-content">
-        <div className="pool-count-wrap">
-          <div className="pool-count" key={remaining}>{remaining}</div>
-          <div className="pool-count-label">PLAYERS REMAINING</div>
-          <div className="pool-count-sub">out of {totalPool}</div>
-        </div>
-
-        <div className="pool-narrow-bar">
-          <div className="pool-narrow-fill" style={{ width: `${narrowPct}%` }}></div>
-        </div>
-        <div className="pool-narrow-meta">
-          <span>ELIMINATED</span>
-          <span style={{ color: '#EF4444' }}>{Math.round(narrowPct)}%</span>
-        </div>
-
-        <div className="pool-divider"></div>
-
-        <div className="pool-top-label">🎯 TOP SUSPECTS</div>
-        <div className="pool-candidates" key={qIndex}>
-          {topCandidates.map((c, i) => (
-            <div key={c.name} className="pool-candidate" style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className="pool-candidate-rank">#{i + 1}</div>
-              <div className="pool-candidate-info">
-                <div className="pool-candidate-name">{c.name}</div>
-                <div className="pool-candidate-meta">{c.team} · {c.role}</div>
-              </div>
-              <div className="pool-candidate-dot"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── GAME SCREEN ─────────────────────────────────────────────────────────────
 function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking, candidateSnapshot }) {
@@ -190,7 +147,7 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
             <span style={{ color: '#F59E0B' }}>{Math.round(((qIndex + 1) / 8) * 100)}%</span>
           </div>
           <div className="guess-progress-track">
-             <div className="guess-progress-fill" style={{ width: `${((qIndex + 1) / 8) * 100}%` }}></div>
+            <div className="guess-progress-fill" style={{ width: `${((qIndex + 1) / 8) * 100}%` }}></div>
           </div>
         </div>
 
@@ -216,9 +173,9 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
 
         <div className={`guess-buttons ${thinking ? 'disabled' : ''}`}>
           {BTNS.map((b) => (
-            <button 
-              key={b.key} 
-              className="guess-btn solid-btn" 
+            <button
+              key={b.key}
+              className={`guess-btn solid-btn ${b.key === 'maybe' ? 'maybe-btn-large' : ''}`}
               onClick={() => onAnswer(b.key, b.label)}
               style={{ background: b.bg, '--btn-shadow': b.shadow }}
             >
@@ -227,7 +184,7 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
             </button>
           ))}
         </div>
-        
+
         <div className="game-footer-text">
           Think carefully before answering — every response narrows the pool
         </div>
@@ -239,27 +196,26 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
           <div className="section-label" style={{ color: '#3B82F6' }}>◈ MATCH STATUS</div>
           <div className="panel-content">
             <div className="ai-stat-row">
-               <div className="ai-stat-lbl">Squad Remaining</div>
-               <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{candidateSnapshot.remaining}</div>
+              <div className="ai-stat-lbl">Squad Remaining</div>
+              <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{candidateSnapshot.remaining}</div>
             </div>
-            <div className="progress-thin"><div className="progress-fill" style={{ width: `${100-confidence}%`, background: '#3B82F6' }}></div></div>
+            <div className="progress-thin"><div className="progress-fill" style={{ width: `${100 - confidence}%`, background: '#3B82F6' }}></div></div>
 
             <div className="ai-stat-row" style={{ marginTop: '16px' }}>
-               <div className="ai-stat-lbl">Overs Left</div>
-               <div className="ai-stat-val" style={{ color: '#F59E0B' }}>{8 - qIndex}</div>
+              <div className="ai-stat-lbl">Overs Left</div>
+              <div className="ai-stat-val" style={{ color: '#F59E0B' }}>{8 - qIndex}</div>
             </div>
-            <div className="progress-thin"><div className="progress-fill" style={{ width: `${((8-qIndex)/8) * 100}%`, background: '#F59E0B' }}></div></div>
+            <div className="progress-thin"><div className="progress-fill" style={{ width: `${((8 - qIndex) / 8) * 100}%`, background: '#F59E0B' }}></div></div>
 
             <div className="ai-stat-row" style={{ marginTop: '16px' }}>
-               <div className="ai-stat-lbl">Win Predictor</div>
-               <div className="ai-stat-val" style={{ color: '#10B981' }}>{confidence}%</div>
+              <div className="ai-stat-lbl">Win Predictor</div>
+              <div className="ai-stat-val" style={{ color: '#10B981' }}>{confidence}%</div>
             </div>
             <div className="progress-thin"><div className="progress-fill" style={{ width: `${confidence}%`, background: '#10B981' }}></div></div>
           </div>
         </div>
 
-        {/* Live Candidate Pool */}
-        <CandidatePool snapshot={candidateSnapshot} qIndex={qIndex} />
+
       </div>
     </div>
   );
@@ -402,7 +358,7 @@ export default function GuessPage() {
   const handleAnswer = (key, label) => {
     if (thinking) return;
     setThinking(true);
-    
+
     const gain = key === "yes" ? 18 : key === "no" ? 16 : key === "maybe" ? 9 : 5;
     const noise = Math.floor(Math.random() * 8);
     const newConf = Math.min(97, confidence + gain + noise);
@@ -412,7 +368,7 @@ export default function GuessPage() {
       setConfidence(newConf);
       setHistory(newHistory);
       setCandidateSnapshot(getCandidateSnapshot(qIndex + 1, newConf));
-      
+
       if (newConf >= 80 || qIndex >= QUESTIONS.length - 1) {
         setPlayer(PLAYERS[Math.floor(Math.random() * PLAYERS.length)]);
         setScreen("guess");

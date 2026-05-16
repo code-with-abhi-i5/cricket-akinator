@@ -53,7 +53,7 @@ export default function Playbook() {
     <section className="playbook" id="playbook" ref={sectionRef}>
       <div className="container">
         <div className="playbook__header">
-          <span className="section-label">⚡ // Match Protocol</span>
+          <span className="section-label">⚡ Match Protocol</span>
           <h2 className="headline-xl" id="playbook-title">The Playbook</h2>
           <p className="body-lg playbook__desc">
             Mastering CricGuess AI requires more than just luck — it requires tactical insight and deep cricket knowledge.

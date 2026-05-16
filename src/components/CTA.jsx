@@ -42,7 +42,7 @@ export default function CTA() {
           <div className="cta__corner cta__corner--bl"></div>
           <div className="cta__corner cta__corner--br"></div>
 
-          <span className="section-label cta__label">🏏 // Match Ready</span>
+          <span className="section-label cta__label">🏏 Match Ready</span>
 
           <h2 className="cta__title" id="cta-title">
             Ready to prove your<br />

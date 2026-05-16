@@ -402,6 +402,10 @@
   opacity: 0.5;
   pointer-events: none;
 }
+.maybe-btn-large {
+  grid-column: span 2;
+  padding: 24px 16px;
+}
 .solid-btn {
   border: none;
   border-radius: 12px;
