@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
 
-const API_BASE = 'https://victor-von-somebody-diving.trycloudflare.com';
+const API_BASE = 'https://declaration-plant-assumed-ground.trycloudflare.com';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
@@ -269,6 +269,51 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
 // ─── GUESS SCREEN ────────────────────────────────────────────────────────────
 function GuessScreen({ player, confidence, onCorrect, onWrong }) {
   const [phase, setPhase] = useState("reveal");
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchImage = async () => {
+      setImageLoading(true);
+      try {
+        const formattedName = player.name.replace(/ /g, '_');
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${formattedName}`);
+
+        if (!res.ok) {
+          throw new Error("Wikipedia API failed");
+        }
+
+        const data = await res.json();
+
+        if (isMounted) {
+          if (data && data.thumbnail && data.thumbnail.source) {
+            setImageUrl(data.thumbnail.source);
+          } else {
+            // Cricket placeholder image
+            setImageUrl("https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=400&auto=format&fit=crop");
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          setImageUrl("https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=400&auto=format&fit=crop");
+        }
+      } finally {
+        if (isMounted) {
+          setImageLoading(false);
+        }
+      }
+    };
+
+    if (player && player.name) {
+      fetchImage();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [player]);
 
   return (
     <div className="container guess-reveal">
@@ -281,6 +326,28 @@ function GuessScreen({ player, confidence, onCorrect, onWrong }) {
         </div>
         <div className="reveal-flag">{player.flag}</div>
         <h1 className="headline-xl reveal-name">{player.name}</h1>
+
+        <div style={{ margin: '20px 0', minHeight: '160px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {imageLoading ? (
+            <div className="ai-avatar-ring" style={{ width: '60px', height: '60px', animation: 'spin 1.2s linear infinite' }}></div>
+          ) : (
+            <img
+              src={imageUrl}
+              alt={player.name}
+              style={{
+                width: '160px',
+                height: '160px',
+                objectFit: 'cover',
+                borderRadius: '16px',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                animation: 'fadeUp 0.6s ease',
+                border: `2px solid ${player.color || '#3B82F6'}`,
+                backgroundColor: '#0B0E14'
+              }}
+            />
+          )}
+        </div>
+
         <div className="reveal-team" style={{ color: player.color }}>{player.team}</div>
         <div className="reveal-role">{player.role}</div>
 
@@ -420,7 +487,7 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Bypass-Tunnel-Reminder": "true",
           "ngrok-skip-browser-warning": "true"
@@ -459,7 +526,7 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Bypass-Tunnel-Reminder": "true",
           "ngrok-skip-browser-warning": "true"
@@ -514,7 +581,7 @@ export default function GuessPage() {
     try {
       await fetch(`${API_BASE}/reset`, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Bypass-Tunnel-Reminder": "true",
           "ngrok-skip-browser-warning": "true"
