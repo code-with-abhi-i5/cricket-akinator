@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'https://residents-colon-greatest-beef.trycloudflare.com';
+const API_BASE = 'https://victor-von-somebody-diving.trycloudflare.com';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
@@ -421,7 +421,11 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
         credentials: "include",
         body: JSON.stringify({}),
       });
@@ -456,7 +460,11 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
         credentials: "include",
         body: JSON.stringify({ answer: key }),
       });
@@ -499,11 +507,24 @@ export default function GuessPage() {
     setScreen("results");
   };
 
-  const reset = () => {
+  const reset = async () => {
     setPlayer(null);
     setEndTime(null);
     setGameResult(null);
     startTimeRef.current = Math.floor(Date.now() / 1000);
+    try {
+      await fetch(`${API_BASE}/reset`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("[API] reset failed:", err);
+    }
     startGame();
   };
 
