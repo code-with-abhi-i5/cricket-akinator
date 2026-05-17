@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'https://residents-colon-greatest-beef.trycloudflare.com';
+const API_BASE = 'https://victor-von-somebody-diving.trycloudflare.com';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
@@ -31,7 +31,6 @@ const BTNS = [
   { label: "YES", icon: "✓", key: "yes", bg: "linear-gradient(135deg, #34D399 0%, #10B981 100%)", shadow: "rgba(16, 185, 129, 0.4)" },
   { label: "NO", icon: "✕", key: "no", bg: "linear-gradient(135deg, #FB7185 0%, #E11D48 100%)", shadow: "rgba(225, 29, 72, 0.4)" },
   { label: "MAYBE", icon: "~", key: "maybe", bg: "linear-gradient(135deg, #FBBF24 0%, #D97706 100%)", shadow: "rgba(217, 119, 6, 0.4)" },
-  { label: "DON'T KNOW", icon: "?", key: "dk", bg: "linear-gradient(135deg, #94A3B8 0%, #475569 100%)", shadow: "rgba(71, 85, 105, 0.4)" },
 ];
 
 // ─── MOCK CANDIDATE POOL ─────────────────────────────────────────────────────
@@ -421,7 +420,11 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
         credentials: "include",
         body: JSON.stringify({}),
       });
@@ -456,7 +459,11 @@ export default function GuessPage() {
     try {
       const res = await fetch(`${API_BASE}/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
         credentials: "include",
         body: JSON.stringify({ answer: key }),
       });
@@ -499,11 +506,24 @@ export default function GuessPage() {
     setScreen("results");
   };
 
-  const reset = () => {
+  const reset = async () => {
     setPlayer(null);
     setEndTime(null);
     setGameResult(null);
     startTimeRef.current = Math.floor(Date.now() / 1000);
+    try {
+      await fetch(`${API_BASE}/reset`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        },
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("[API] reset failed:", err);
+    }
     startGame();
   };
 
