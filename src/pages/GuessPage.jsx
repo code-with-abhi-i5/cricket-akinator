@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
 
-const API_BASE = import.meta.env.API_BASE;
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://residents-colon-greatest-beef.trycloudflare.com';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
