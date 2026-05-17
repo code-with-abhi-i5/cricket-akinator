@@ -31,7 +31,6 @@ const BTNS = [
   { label: "YES", icon: "✓", key: "yes", bg: "linear-gradient(135deg, #34D399 0%, #10B981 100%)", shadow: "rgba(16, 185, 129, 0.4)" },
   { label: "NO", icon: "✕", key: "no", bg: "linear-gradient(135deg, #FB7185 0%, #E11D48 100%)", shadow: "rgba(225, 29, 72, 0.4)" },
   { label: "MAYBE", icon: "~", key: "maybe", bg: "linear-gradient(135deg, #FBBF24 0%, #D97706 100%)", shadow: "rgba(217, 119, 6, 0.4)" },
-  { label: "DON'T KNOW", icon: "?", key: "dk", bg: "linear-gradient(135deg, #94A3B8 0%, #475569 100%)", shadow: "rgba(71, 85, 105, 0.4)" },
 ];
 
 // ─── MOCK CANDIDATE POOL ─────────────────────────────────────────────────────
