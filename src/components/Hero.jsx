@@ -26,14 +26,14 @@ const StatCounter = ({ end, suffix = '', duration = 2000, isFloat = false }) => 
         window.requestAnimationFrame(step);
       }
     };
-    
+
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         window.requestAnimationFrame(step);
         observer.disconnect();
       }
     }, { threshold: 0.1 });
-    
+
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [end, duration]);
@@ -44,7 +44,7 @@ const StatCounter = ({ end, suffix = '', duration = 2000, isFloat = false }) => 
 // Typewriter Component
 const TypewriterText = ({ text, delay = 0 }) => {
   const [displayedText, setDisplayedText] = useState('');
-  
+
   useEffect(() => {
     let i = 0;
     let interval;
@@ -103,8 +103,49 @@ export default function Hero() {
     setMousePos({ x, y });
   };
 
+  const handleMagneticMove = (e) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+  };
+
+  const handleMagneticLeave = (e) => {
+    const btn = e.currentTarget;
+    btn.style.transform = `translate(0px, 0px)`;
+  };
+
+  const handleMysteryMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -15;
+    const rotateY = ((x - centerX) / centerX) * 15;
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+  };
+
+  const handleMysteryMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+  };
+
+  const handleHeroClick = (e) => {
+    const explosion = document.createElement('div');
+    explosion.className = 'click-explosion';
+    explosion.style.left = `${e.clientX}px`;
+    explosion.style.top = `${e.clientY}px`;
+    document.body.appendChild(explosion);
+    setTimeout(() => {
+      explosion.remove();
+    }, 600);
+  };
+
   return (
-    <section className="hero" id="hero" ref={heroRef} onMouseMove={handleMouseMove}>
+    <section className="hero" id="hero" ref={heroRef} onMouseMove={handleMouseMove} onClick={handleHeroClick}>
       {/* Stadium Background Image */}
       <div className="hero__bg">
         <div className="hero__stadium-img">
@@ -142,7 +183,11 @@ export default function Hero() {
 
         {/* Who Am I? Mystery Card */}
         <div className="hero__mystery-card" style={{ transform: `translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)` }}>
-          <div className="mystery-card-inner">
+          <div
+            className="mystery-card-inner parallax-tilt"
+            onMouseMove={handleMysteryMouseMove}
+            onMouseLeave={handleMysteryMouseLeave}
+          >
             <div className="mystery-card-glow"></div>
             <div className="mystery-q">?</div>
             <div className="mystery-stats">
@@ -249,14 +294,28 @@ export default function Hero() {
         </div>
 
         <div className="hero__actions" id="hero-actions">
-          <Link to="/guess" className="btn-tactical btn-primary">
+          <Link
+            to="/guess"
+            className="btn-tactical btn-primary magnetic-btn"
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
+          >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M6.5 3.5l5 4.5-5 4.5V3.5z" />
             </svg>
             Start Playing
           </Link>
-          <a href="#playbook" className="btn-tactical btn-secondary">
-            View Playbook
+          <a
+            href="#tactical-analysis"
+            className="btn-tactical btn-secondary magnetic-btn tactical-glow"
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+            Tactical Analysis
           </a>
         </div>
 
