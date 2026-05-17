@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './GuessPage.css';
+
+const API_BASE = import.meta.env.API_BASE;
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
@@ -190,7 +192,7 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
             <span style={{ color: '#F59E0B' }}>{Math.round(((qIndex + 1) / 8) * 100)}%</span>
           </div>
           <div className="guess-progress-track">
-             <div className="guess-progress-fill" style={{ width: `${((qIndex + 1) / 8) * 100}%` }}></div>
+            <div className="guess-progress-fill" style={{ width: `${((qIndex + 1) / 8) * 100}%` }}></div>
           </div>
         </div>
 
@@ -216,9 +218,9 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
 
         <div className={`guess-buttons ${thinking ? 'disabled' : ''}`}>
           {BTNS.map((b) => (
-            <button 
-              key={b.key} 
-              className="guess-btn solid-btn" 
+            <button
+              key={b.key}
+              className="guess-btn solid-btn"
               onClick={() => onAnswer(b.key, b.label)}
               style={{ background: b.bg, '--btn-shadow': b.shadow }}
             >
@@ -227,7 +229,7 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
             </button>
           ))}
         </div>
-        
+
         <div className="game-footer-text">
           Think carefully before answering — every response narrows the pool
         </div>
@@ -239,20 +241,20 @@ function GameScreen({ qIndex, question, confidence, history, onAnswer, thinking,
           <div className="section-label" style={{ color: '#3B82F6' }}>◈ MATCH STATUS</div>
           <div className="panel-content">
             <div className="ai-stat-row">
-               <div className="ai-stat-lbl">Squad Remaining</div>
-               <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{candidateSnapshot.remaining}</div>
+              <div className="ai-stat-lbl">Squad Remaining</div>
+              <div className="ai-stat-val" style={{ color: '#3B82F6' }}>{candidateSnapshot.remaining}</div>
             </div>
-            <div className="progress-thin"><div className="progress-fill" style={{ width: `${100-confidence}%`, background: '#3B82F6' }}></div></div>
+            <div className="progress-thin"><div className="progress-fill" style={{ width: `${100 - confidence}%`, background: '#3B82F6' }}></div></div>
 
             <div className="ai-stat-row" style={{ marginTop: '16px' }}>
-               <div className="ai-stat-lbl">Overs Left</div>
-               <div className="ai-stat-val" style={{ color: '#F59E0B' }}>{8 - qIndex}</div>
+              <div className="ai-stat-lbl">Overs Left</div>
+              <div className="ai-stat-val" style={{ color: '#F59E0B' }}>{8 - qIndex}</div>
             </div>
-            <div className="progress-thin"><div className="progress-fill" style={{ width: `${((8-qIndex)/8) * 100}%`, background: '#F59E0B' }}></div></div>
+            <div className="progress-thin"><div className="progress-fill" style={{ width: `${((8 - qIndex) / 8) * 100}%`, background: '#F59E0B' }}></div></div>
 
             <div className="ai-stat-row" style={{ marginTop: '16px' }}>
-               <div className="ai-stat-lbl">Win Predictor</div>
-               <div className="ai-stat-val" style={{ color: '#10B981' }}>{confidence}%</div>
+              <div className="ai-stat-lbl">Win Predictor</div>
+              <div className="ai-stat-val" style={{ color: '#10B981' }}>{confidence}%</div>
             </div>
             <div className="progress-thin"><div className="progress-fill" style={{ width: `${confidence}%`, background: '#10B981' }}></div></div>
           </div>
@@ -388,136 +390,185 @@ function ResultsScreen({ player, confidence, questionsAsked, timeTakenSec, isCor
 
 // ─── ROOT PAGE ───────────────────────────────────────────────────────────────
 export default function GuessPage() {
-  const [screen, setScreen] = useState("game");
+  const [screen, setScreen] = useState("loading");
   const [qIndex, setQIndex] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState("");
   const [confidence, setConfidence] = useState(12);
   const [history, setHistory] = useState([]);
   const [thinking, setThinking] = useState(false);
   const [player, setPlayer] = useState(null);
-  const [startTime] = useState(() => Math.floor(Date.now() / 1000));
+  const [apiError, setApiError] = useState(null);
+  const startTimeRef = useRef(Math.floor(Date.now() / 1000));
   const [endTime, setEndTime] = useState(null);
   const [gameResult, setGameResult] = useState(null);
   const [candidateSnapshot, setCandidateSnapshot] = useState(() => getCandidateSnapshot(0, 12));
 
-  const handleAnswer = (key, label) => {
+  // Build player object from API guess data
+  const buildPlayer = (data) => {
+    const name = data.player || data.guess || data.name || "Unknown Player";
+    const team = data.team || "IPL";
+    const role = data.role || "Cricketer";
+    const abbr = name.split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
+    // Try to match with PLAYERS list for richer info
+    const match = PLAYERS.find(p => p.name.toLowerCase() === name.toLowerCase());
+    return match || { name, team, role, abbr, flag: "🏏", color: "#00F2FF" };
+  };
+
+  // Start a new game session
+  const startGame = async () => {
+    setApiError(null);
+    setScreen("loading");
+    try {
+      const res = await fetch(`${API_BASE}/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      console.log("[API] start:", data);
+
+      if (!data.success) throw new Error("API returned success: false");
+
+      const state = data.state;
+      const question = state.currentQuestion || "";
+      const conf = state.confidence ?? 12;
+
+      setCurrentQuestion(question);
+      setConfidence(Math.round(conf));
+      setQIndex(0);
+      setHistory([]);
+      setCandidateSnapshot(getCandidateSnapshot(0, Math.round(conf)));
+      setScreen("game");
+    } catch (err) {
+      console.error("[API] start failed:", err);
+      setApiError("Could not connect to the AI server. Please try again.");
+      setScreen("error");
+    }
+  };
+
+  // Send an answer and get next question or final guess
+  const handleAnswer = async (key, label) => {
     if (thinking) return;
     setThinking(true);
-    
-    const gain = key === "yes" ? 18 : key === "no" ? 16 : key === "maybe" ? 9 : 5;
-    const noise = Math.floor(Math.random() * 8);
-    const newConf = Math.min(97, confidence + gain + noise);
-    const newHistory = [...history, { q: QUESTIONS[qIndex], a: label }];
 
-    setTimeout(() => {
-      setConfidence(newConf);
+    const prevQuestion = currentQuestion;
+    try {
+      const res = await fetch(`${API_BASE}/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ answer: key }),
+      });
+      const data = await res.json();
+      console.log("[API] answer:", data);
+
+      if (!data.success) throw new Error("API returned success: false");
+
+      const state = data.state;
+      const newHistory = [...history, { q: prevQuestion, a: label }];
       setHistory(newHistory);
-      setCandidateSnapshot(getCandidateSnapshot(qIndex + 1, newConf));
-      
-      if (newConf >= 80 || qIndex >= QUESTIONS.length - 1) {
-        setPlayer(PLAYERS[Math.floor(Math.random() * PLAYERS.length)]);
+
+      // finalGuess being non-null means the AI has made its guess
+      if (state.finalGuess !== null && state.finalGuess !== undefined) {
+        const conf = state.confidence ?? confidence;
+        setConfidence(Math.round(conf));
+        setPlayer(buildPlayer({ player: state.finalGuess, ...state }));
+        setEndTime(Math.floor(Date.now() / 1000));
         setScreen("guess");
       } else {
-        setQIndex(qIndex + 1);
+        const newConf = state.confidence ?? Math.min(97, confidence + 12);
+        const newQIndex = (state.previousQuestions?.length ?? qIndex + 1);
+        setConfidence(Math.round(newConf));
+        setCurrentQuestion(state.currentQuestion || "");
+        setQIndex(newQIndex);
+        setCandidateSnapshot(getCandidateSnapshot(newQIndex, Math.round(newConf)));
+        setScreen("game");
       }
+    } catch (err) {
+      console.error("[API] answer failed:", err);
+      setApiError("Connection lost. Please try again.");
+      setScreen("error");
+    } finally {
       setThinking(false);
-    }, 800 + Math.random() * 400);
+    }
   };
 
   const handleGuessResult = (wasCorrect) => {
-    setEndTime(Math.floor(Date.now() / 1000));
     setGameResult(wasCorrect);
     setScreen("results");
   };
 
   const reset = () => {
-    setScreen("game");
-    setQIndex(0);
-    setConfidence(12);
-    setHistory([]);
-    setThinking(false);
     setPlayer(null);
     setEndTime(null);
     setGameResult(null);
-    setCandidateSnapshot(getCandidateSnapshot(0, 12));
+    startTimeRef.current = Math.floor(Date.now() / 1000);
+    startGame();
   };
 
-  const timeTakenSec = endTime ? endTime - startTime : 0;
+  // Auto-start on mount
+  useEffect(() => { startGame(); }, []);
+
+  const timeTakenSec = endTime ? endTime - startTimeRef.current : 0;
+
+  const Background = () => (
+    <div className="guess-bg">
+      <div className="guess-bg-glow"></div>
+      <div className="wagon-wheel-wrap">
+        <svg className="wagon-wheel-svg" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="300" cy="300" r="280" stroke="rgba(0,242,255,0.08)" strokeWidth="1.5" />
+          <circle cx="300" cy="300" r="220" stroke="rgba(0,242,255,0.06)" strokeWidth="1" strokeDasharray="6 4" />
+          <circle cx="300" cy="300" r="160" stroke="rgba(0,242,255,0.05)" strokeWidth="1" />
+          <circle cx="300" cy="300" r="100" stroke="rgba(0,242,255,0.07)" strokeWidth="1" strokeDasharray="4 6" />
+          <circle cx="300" cy="300" r="40" stroke="rgba(0,242,255,0.06)" strokeWidth="1" />
+          <circle cx="300" cy="300" r="130" stroke="rgba(245,158,11,0.08)" strokeWidth="1.5" strokeDasharray="8 4" />
+          <rect x="292" y="240" width="16" height="120" rx="2" stroke="rgba(0,242,255,0.12)" strokeWidth="1" fill="rgba(0,242,255,0.02)" />
+          <line x1="280" y1="255" x2="320" y2="255" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+          <line x1="280" y1="345" x2="320" y2="345" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+          <line x1="300" y1="300" x2="300" y2="20" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="498" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="580" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="498" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="300" y2="580" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="102" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="20" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
+          <line x1="300" y1="300" x2="102" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
+          <circle cx="300" cy="300" r="4" fill="rgba(0,242,255,0.15)" />
+          <circle cx="300" cy="300" r="8" stroke="rgba(0,242,255,0.1)" strokeWidth="0.8" fill="none" />
+        </svg>
+        <div className="radar-sweep"></div>
+        <div className="radar-scanline"></div>
+      </div>
+    </div>
+  );
 
   return (
     <>
       <Navbar />
       <div className="guess-page">
-        <div className="guess-bg">
-          <div className="guess-bg-glow"></div>
+        <Background />
 
-          {/* Wagon Wheel / Pitch Map Background */}
-          <div className="wagon-wheel-wrap">
-            <svg className="wagon-wheel-svg" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Outer field boundary */}
-              <circle cx="300" cy="300" r="280" stroke="rgba(0,242,255,0.08)" strokeWidth="1.5" />
-              <circle cx="300" cy="300" r="220" stroke="rgba(0,242,255,0.06)" strokeWidth="1" strokeDasharray="6 4" />
-              <circle cx="300" cy="300" r="160" stroke="rgba(0,242,255,0.05)" strokeWidth="1" />
-              <circle cx="300" cy="300" r="100" stroke="rgba(0,242,255,0.07)" strokeWidth="1" strokeDasharray="4 6" />
-              <circle cx="300" cy="300" r="40" stroke="rgba(0,242,255,0.06)" strokeWidth="1" />
-
-              {/* 30-yard circle */}
-              <circle cx="300" cy="300" r="130" stroke="rgba(245,158,11,0.08)" strokeWidth="1.5" strokeDasharray="8 4" />
-
-              {/* Pitch rectangle */}
-              <rect x="292" y="240" width="16" height="120" rx="2" stroke="rgba(0,242,255,0.12)" strokeWidth="1" fill="rgba(0,242,255,0.02)" />
-              {/* Crease lines */}
-              <line x1="280" y1="255" x2="320" y2="255" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-              <line x1="280" y1="345" x2="320" y2="345" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-
-              {/* Wagon wheel spokes — field zones */}
-              <line x1="300" y1="300" x2="300" y2="20" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="498" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="580" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="498" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="300" y2="580" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="102" y2="500" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="20" y2="300" stroke="rgba(0,242,255,0.05)" strokeWidth="0.8" />
-              <line x1="300" y1="300" x2="102" y2="100" stroke="rgba(0,242,255,0.04)" strokeWidth="0.8" />
-
-              {/* Zone labels */}
-              <text x="300" y="50" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">STRAIGHT</text>
-              <text x="540" y="300" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">POINT</text>
-              <text x="300" y="565" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">FINE LEG</text>
-              <text x="60" y="300" textAnchor="middle" fill="rgba(0,242,255,0.1)" fontSize="9" fontFamily="monospace">MID-ON</text>
-              <text x="475" y="120" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">COVER</text>
-              <text x="475" y="490" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">SQUARE</text>
-              <text x="125" y="490" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">LEG</text>
-              <text x="125" y="120" textAnchor="middle" fill="rgba(0,242,255,0.08)" fontSize="8" fontFamily="monospace">MID-WKT</text>
-
-              {/* Shot dots — simulated wagon wheel hits */}
-              <circle cx="340" cy="120" r="3" fill="rgba(16,185,129,0.25)" />
-              <circle cx="420" cy="180" r="2.5" fill="rgba(245,158,11,0.2)" />
-              <circle cx="460" cy="260" r="3" fill="rgba(16,185,129,0.25)" />
-              <circle cx="380" cy="350" r="2" fill="rgba(239,68,68,0.2)" />
-              <circle cx="200" cy="200" r="3" fill="rgba(16,185,129,0.25)" />
-              <circle cx="180" cy="380" r="2.5" fill="rgba(245,158,11,0.2)" />
-              <circle cx="250" cy="150" r="2" fill="rgba(0,242,255,0.2)" />
-              <circle cx="350" cy="450" r="3" fill="rgba(16,185,129,0.2)" />
-              <circle cx="150" cy="280" r="2.5" fill="rgba(239,68,68,0.2)" />
-              <circle cx="430" cy="400" r="2" fill="rgba(0,242,255,0.2)" />
-
-              {/* Center dot */}
-              <circle cx="300" cy="300" r="4" fill="rgba(0,242,255,0.15)" />
-              <circle cx="300" cy="300" r="8" stroke="rgba(0,242,255,0.1)" strokeWidth="0.8" fill="none" />
-            </svg>
-
-            {/* Radar Sweep */}
-            <div className="radar-sweep"></div>
-
-            {/* Scan line */}
-            <div className="radar-scanline"></div>
+        {screen === "loading" && (
+          <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '24px' }}>
+            <div className="ai-avatar-ring" style={{ width: '80px', height: '80px', animation: 'spin 1.2s linear infinite' }}></div>
+            <div className="section-label" style={{ color: 'var(--color-primary)' }}>◈ CONNECTING TO AI ENGINE...</div>
           </div>
-        </div>
+        )}
+
+        {screen === "error" && (
+          <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '24px', textAlign: 'center' }}>
+            <div style={{ fontSize: '48px' }}>⚠️</div>
+            <div className="section-label" style={{ color: '#EF4444' }}>◈ CONNECTION ERROR</div>
+            <p style={{ color: 'var(--color-text-muted)', maxWidth: '400px' }}>{apiError}</p>
+            <button className="btn-play-again" onClick={startGame}>🔄 RETRY</button>
+          </div>
+        )}
 
         {screen === "game" && (
           <GameScreen
             qIndex={qIndex}
-            question={QUESTIONS[qIndex]}
+            question={currentQuestion}
             confidence={confidence}
             history={history}
             onAnswer={handleAnswer}
