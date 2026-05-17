@@ -32,7 +32,7 @@ export default function Leaderboard() {
     <section className="lb" id="leaderboard" ref={sectionRef}>
       <div className="container">
         <div className="lb__header">
-          <span className="section-label">🏆 // Hall of Fame</span>
+          <span className="section-label">🏆 Hall of Fame</span>
           <h2 className="headline-xl" id="lb-title">Leaderboard</h2>
           <p className="body-lg lb__desc">
             Top cricket minds competing for the crown. Can you beat them?
